@@ -539,6 +539,8 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
   };
   attributes: {
     category: Schema.Attribute.String;
+    course: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
+    courses: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

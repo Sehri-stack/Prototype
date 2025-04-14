@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { login } from "../public/utils/auth";
+import { login } from "./utils/auth";
 
 const LoginPage = () => {
   const router = useRouter();

@@ -3,11 +3,24 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { fetchCourses } from "public/utils/fetchCourses";
+import { fetchCourses } from "./utils/fetchCourses";
 
 export default function Home() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const getCourses = async () => {
+      const data = await fetchCourses();
+      setCourses(data);
+    };
+
+    getCourses();
+  }, []);
+  
 
   const featuredCourses = [
     {
@@ -69,10 +82,6 @@ export default function Home() {
     "API Development",
   ];
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const StarRating = ({ rating, reviews }) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -105,9 +114,7 @@ export default function Home() {
           <div className="row align-items-center">
             <div
               className={`col-md-6 ${
-                mounted
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               } transition-all duration-700 ease-out`}
             >
               <h1 className="display-4 fw-bold text-dark">
@@ -119,7 +126,7 @@ export default function Home() {
                 today!
               </p>
               <div className="mt-4">
-                <Link href="/" className="btn btn-primary btn-lg px-5 py-3">
+                <Link href="/courses" className="btn btn-primary btn-lg px-5 py-3">
                   Browse Courses
                 </Link>
               </div>
@@ -180,9 +187,7 @@ export default function Home() {
               <div
                 key={course.id}
                 className={`col ${
-                  mounted
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4"
+                  mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 } transition-all duration-500 ease-out`}
                 style={{ transitionDelay: `${150 * index}ms` }}
               >
@@ -206,10 +211,7 @@ export default function Home() {
                     <p className="card-text text-secondary">
                       {course.instructor}
                     </p>
-                    <StarRating
-                      rating={course.rating}
-                      reviews={course.reviews}
-                    />
+                    <StarRating rating={course.rating} reviews={course.reviews} />
                     <div className="mt-2">
                       <span className="text-dark fw-bold">${course.price}</span>
                       <span className="text-secondary text-decoration-line-through ms-2">
@@ -223,14 +225,45 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-5">
-            <Link href="/" className="btn btn-outline-dark btn-lg px-5 py-3">
+            <Link href="/courses" className="btn btn-outline-dark btn-lg px-5 py-3">
               View all courses
             </Link>
           </div>
         </div>
       </div>
 
-      {/* ... Testimonials, CTA and Footer remain same ... */}
+      {/* Live Courses from Strapi */}
+      <div className="py-5 bg-light">
+        <div className="container">
+          <h2 className="h2 fw-bold text-dark mb-4">All Courses (Live from API)</h2>
+
+          {courses.length === 0 ? (
+            <p>Loading courses...</p>
+          ) : (
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+              {courses.map((course) => (
+                <div key={course.id} className="col">
+                  <div className="card h-100 shadow-sm">
+                    <Image
+                      src={course.image?.url || "/api/placeholder/400/default.jpg"}
+                      alt={course.title}
+                      width={400}
+                      height={225}
+                      className="card-img-top"
+                    />
+                    <div className="card-body">
+                      <h3 className="card-title text-dark fw-semibold">
+                        {course.title}
+                      </h3>
+                      <p className="card-text text-secondary">{course.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
