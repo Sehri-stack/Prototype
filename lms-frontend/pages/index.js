@@ -20,7 +20,6 @@ export default function Home() {
 
     getCourses();
   }, []);
-  
 
   const featuredCourses = [
     {
@@ -264,6 +263,46 @@ export default function Home() {
           )}
         </div>
       </div>
+
+      {/* Footer Section */}
+      <footer className="bg-dark text-white pt-5 pb-3 mt-5">
+        <div className="container">
+          <div className="row">
+
+            {/* About */}
+            <div className="col-md-4 mb-4">
+              <h5 className="fw-bold">E-Learnify</h5>
+              <p className="text-secondary">
+                Learn at your own pace with curated, expert-led courses.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="col-md-4 mb-4">
+              <h5 className="fw-bold">Quick Links</h5>
+              <ul className="list-unstyled">
+                <li><Link href="/" className="text-secondary text-decoration-none">Home</Link></li>
+                <li><Link href="/courses" className="text-secondary text-decoration-none">Courses</Link></li>
+                <li><Link href="/about" className="text-secondary text-decoration-none">About</Link></li>
+                <li><Link href="/contact" className="text-secondary text-decoration-none">Contact</Link></li>
+              </ul>
+            </div>
+
+            {/* Contact Info */}
+            <div className="col-md-4 mb-4">
+              <h5 className="fw-bold">Get in Touch</h5>
+              <p className="text-secondary mb-1">Email: support@elearnify.com</p>
+              <p className="text-secondary mb-0">Phone: +1 234 567 890</p>
+            </div>
+          </div>
+
+          <hr className="border-secondary" />
+
+          <div className="text-center text-secondary">
+            &copy; {new Date().getFullYear()} E-Learnify. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
