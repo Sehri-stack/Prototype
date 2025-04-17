@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CourseList from "./components/CourseList";
-import { fetchCourses } from "./utis/fetchCourses";
+import { fetchCourses } from "./utils/fetchCourses";
 
 
 export default function CoursesPage() {

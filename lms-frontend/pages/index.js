@@ -3,24 +3,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { fetchCourses } from "./utils/fetchCourses";
 
 export default function Home() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  const [courses, setCourses] = useState([]);
 
-  useEffect(() => {
-    setMounted(true);
-
-    const getCourses = async () => {
-      const data = await fetchCourses();
-      setCourses(data);
-    };
-
-    getCourses();
-  }, []);
-
+  // Sample course data
   const featuredCourses = [
     {
       id: 1,
@@ -66,6 +54,7 @@ export default function Home() {
     },
   ];
 
+  // Popular topic categories
   const categories = [
     "Web Development",
     "JavaScript",
@@ -81,6 +70,12 @@ export default function Home() {
     "API Development",
   ];
 
+  // Set mounted after initial render for animations
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Star Rating Component
   const StarRating = ({ rating, reviews }) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -90,13 +85,13 @@ export default function Home() {
         {[...Array(5)].map((_, i) => (
           <i
             key={i}
-            className={
+            className={`bi ${
               i < fullStars
-                ? "bi bi-star-fill text-warning"
+                ? "bi-star-fill text-warning"
                 : i === fullStars && hasHalfStar
-                ? "bi bi-star-half text-warning"
-                : "bi bi-star text-secondary"
-            }
+                ? "bi-star-half text-warning"
+                : "bi-star text-secondary"
+            }`}
           ></i>
         ))}
         <span className="ms-1 fw-semibold text-dark">{rating}</span>
@@ -113,7 +108,9 @@ export default function Home() {
           <div className="row align-items-center">
             <div
               className={`col-md-6 ${
-                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                mounted
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-4"
               } transition-all duration-700 ease-out`}
             >
               <h1 className="display-4 fw-bold text-dark">
@@ -125,7 +122,7 @@ export default function Home() {
                 today!
               </p>
               <div className="mt-4">
-                <Link href="/courses" className="btn btn-primary btn-lg px-5 py-3">
+                <Link href="/" className="btn btn-primary btn-lg px-5 py-3">
                   Browse Courses
                 </Link>
               </div>
@@ -149,7 +146,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Categories */}
+      {/* Categories Section */}
       <div className="bg-light py-5">
         <div className="container">
           <h2 className="h2 fw-bold text-dark mb-4">
@@ -186,7 +183,9 @@ export default function Home() {
               <div
                 key={course.id}
                 className={`col ${
-                  mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                  mounted
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4"
                 } transition-all duration-500 ease-out`}
                 style={{ transitionDelay: `${150 * index}ms` }}
               >
@@ -210,7 +209,10 @@ export default function Home() {
                     <p className="card-text text-secondary">
                       {course.instructor}
                     </p>
-                    <StarRating rating={course.rating} reviews={course.reviews} />
+                    <StarRating
+                      rating={course.rating}
+                      reviews={course.reviews}
+                    />
                     <div className="mt-2">
                       <span className="text-dark fw-bold">${course.price}</span>
                       <span className="text-secondary text-decoration-line-through ms-2">
@@ -224,82 +226,210 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-5">
-            <Link href="/courses" className="btn btn-outline-dark btn-lg px-5 py-3">
+            <Link href="/" className="btn btn-outline-dark btn-lg px-5 py-3">
               View all courses
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Live Courses from Strapi */}
-      <div className="py-5 bg-light">
-        <div className="container">
-          <h2 className="h2 fw-bold text-dark mb-4">All Courses (Live from API)</h2>
+      {/* Testimonials Section */}
+      <div className="bg-dark py-5">
+        <div className="container text-center">
+          <h2 className="h2 fw-bold text-white mb-4">What our students say</h2>
 
-          {courses.length === 0 ? (
-            <p>Loading courses...</p>
-          ) : (
-            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-              {courses.map((course) => (
-                <div key={course.id} className="col">
-                  <div className="card h-100 shadow-sm">
-                    <Image
-                      src={course.image?.url || "/api/placeholder/400/default.jpg"}
-                      alt={course.title}
-                      width={400}
-                      height={225}
-                      className="card-img-top"
-                    />
-                    <div className="card-body">
-                      <h3 className="card-title text-dark fw-semibold">
-                        {course.title}
-                      </h3>
-                      <p className="card-text text-secondary">{course.description}</p>
+          <div className="row row-cols-1 row-cols-md-3 g-4">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className={`col ${
+                  mounted
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4"
+                } transition-all duration-700 ease-out`}
+                style={{ transitionDelay: `${200 * item}ms` }}
+              >
+                <div className="card bg-secondary text-white h-100">
+                  <div className="card-body">
+                    <div className="d-flex justify-content-center mb-3">
+                      {[...Array(5)].map((_, i) => (
+                        <i key={i} className="bi bi-star-fill text-warning"></i>
+                      ))}
                     </div>
+                    <p className="card-text fst-italic mb-3">
+                      &quot;This platform transformed how I approach learning.
+                      The courses are comprehensive and the instructors are
+                      top-notch.&quot;
+                    </p>
+                    <p className="card-text text-info fw-semibold">
+                      - Student Name
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Footer Section */}
-      <footer className="bg-dark text-white pt-5 pb-3 mt-5">
+      {/* CTA Section */}
+      <div className="bg-primary py-5">
+        <div className="container text-center">
+          <h2 className="h2 fw-bold text-white mb-4">
+            Ready to start learning?
+          </h2>
+          <p className="lead text-light mb-4">
+            Join thousands of students already learning on our platform. Get
+            unlimited access to all courses.
+          </p>
+
+          <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
+            <Link href="/register" className="btn btn-light btn-lg px-5 py-3">
+              Sign up for free
+            </Link>
+            <Link href="/" className="btn btn-outline-light btn-lg px-5 py-3">
+              Browse courses
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-light py-5">
         <div className="container">
-          <div className="row">
-
-            {/* About */}
-            <div className="col-md-4 mb-4">
-              <h5 className="fw-bold">E-Learnify</h5>
-              <p className="text-secondary">
-                Learn at your own pace with curated, expert-led courses.
-              </p>
-            </div>
-
-            {/* Quick Links */}
-            <div className="col-md-4 mb-4">
-              <h5 className="fw-bold">Quick Links</h5>
-              <ul className="list-unstyled">
-                <li><Link href="/" className="text-secondary text-decoration-none">Home</Link></li>
-                <li><Link href="/courses" className="text-secondary text-decoration-none">Courses</Link></li>
-                <li><Link href="/about" className="text-secondary text-decoration-none">About</Link></li>
-                <li><Link href="/contact" className="text-secondary text-decoration-none">Contact</Link></li>
+          <div className="row row-cols-1 row-cols-md-4 g-4">
+            <div>
+              <h3 className="h6 text-uppercase text-secondary">Platform</h3>
+              <ul className="list-unstyled mt-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    About us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Contact us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Blog
+                  </Link>
+                </li>
               </ul>
             </div>
-
-            {/* Contact Info */}
-            <div className="col-md-4 mb-4">
-              <h5 className="fw-bold">Get in Touch</h5>
-              <p className="text-secondary mb-1">Email: support@elearnify.com</p>
-              <p className="text-secondary mb-0">Phone: +1 234 567 890</p>
+            <div>
+              <h3 className="h6 text-uppercase text-secondary">Courses</h3>
+              <ul className="list-unstyled mt-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Web Development
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    JavaScript
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    React
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Node.js
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="h6 text-uppercase text-secondary">Support</h3>
+              <ul className="list-unstyled mt-3">
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Help center
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Terms of service
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="text-decoration-none text-secondary"
+                  >
+                    Privacy policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="h6 text-uppercase text-secondary">
+                Stay connected
+              </h3>
+              <p className="text-secondary mt-3">
+                Subscribe to our newsletter for latest updates.
+              </p>
+              <div className="mt-3">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="form-control mb-2"
+                />
+                <button className="btn btn-primary w-100">Subscribe</button>
+              </div>
             </div>
           </div>
-
-          <hr className="border-secondary" />
-
-          <div className="text-center text-secondary">
-            &copy; {new Date().getFullYear()} E-Learnify. All rights reserved.
+          <div className="border-top mt-5 pt-4">
+            <p className="text-center text-secondary">
+              &copy; 2025 E-Learning Platform. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
