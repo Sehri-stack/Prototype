@@ -3,6 +3,9 @@ import CourseList from "./components/CourseList";
 import { fetchCourses } from "./utils/fetchCourses";
 
 
+
+
+
 export default function CoursesPage() {
   const [courses, setCourses] = useState([]);
 

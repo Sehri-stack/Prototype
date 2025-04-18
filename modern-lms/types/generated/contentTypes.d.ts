@@ -417,7 +417,6 @@ export interface ApiAdminAdmin extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     Name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    tags: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -440,6 +439,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     blocks: Schema.Attribute.DynamicZone<
       ['shared.media', 'shared.quote', 'shared.rich-text', 'shared.slider']
     >;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     cover: Schema.Attribute.Media<'images' | 'files' | 'videos'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -504,9 +504,10 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     singularName: 'category';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
+    articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -538,27 +539,23 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    category: Schema.Attribute.String;
-    course: Schema.Attribute.Relation<'oneToOne', 'api::category.category'>;
-    courses: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     Description: Schema.Attribute.Blocks;
-    Image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    Instructor: Schema.Attribute.Relation<'oneToOne', 'api::course.course'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::course.course'
     > &
       Schema.Attribute.Private;
-    Price: Schema.Attribute.Decimal;
-    Published: Schema.Attribute.Boolean;
     publishedAt: Schema.Attribute.DateTime;
     Title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    VideoURL: Schema.Attribute.String;
   };
 }
 
@@ -624,6 +621,34 @@ export interface ApiLessonLesson extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiReviewReview extends Struct.CollectionTypeSchema {
+  collectionName: 'reviews';
+  info: {
+    displayName: 'Review';
+    pluralName: 'reviews';
+    singularName: 'review';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::review.review'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    Student: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
   collectionName: 'students';
   info: {
@@ -643,33 +668,6 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::student.student'
     > &
-      Schema.Attribute.Private;
-    Name: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTagTag extends Struct.CollectionTypeSchema {
-  collectionName: 'tags';
-  info: {
-    description: '';
-    displayName: 'Tag';
-    pluralName: 'tags';
-    singularName: 'tag';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    course: Schema.Attribute.Relation<'manyToOne', 'api::admin.admin'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'> &
       Schema.Attribute.Private;
     Name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
@@ -1196,8 +1194,8 @@ declare module '@strapi/strapi' {
       'api::course.course': ApiCourseCourse;
       'api::global.global': ApiGlobalGlobal;
       'api::lesson.lesson': ApiLessonLesson;
+      'api::review.review': ApiReviewReview;
       'api::student.student': ApiStudentStudent;
-      'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

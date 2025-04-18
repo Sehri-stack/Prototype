@@ -1,29 +1,72 @@
-// src/app/instructor/page.js
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
 
-export default function InstructorPanel() {
-  const router = useRouter();
-  const [user, setUser] = useState(null);
+export default function InstructorForm() {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [slug, setSlug] = useState('');
+  const [cover, setCover] = useState(null);
 
-  useEffect(() => {
-    // Simulate auth check
-    const loggedInUser = JSON.parse(localStorage.getItem("user"));
-    if (!loggedInUser || loggedInUser.role !== "instructor") {
-      router.push("/login"); // redirect if not instructor
-    } else {
-      setUser(loggedInUser);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("files.cover", cover);
+    formData.append("data", JSON.stringify({
+      title,
+      description,
+      slug,
+    }));
+
+    try {
+      const res = await fetch("http://localhost:1337/api/courses", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer YOUR_TOKEN_HERE"
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      console.log(data);
+      alert('Course with image uploaded!');
+      setTitle('');
+      setDescription('');
+      setSlug('');
+      setCover(null);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Image upload failed');
     }
-  }, []);
-
-  if (!user) return <p>Loading...</p>;
+  };
 
   return (
-    <div className="container py-5">
-      <h1>Welcome, {user.username}</h1>
-      <p>This is your instructor dashboard.</p>
+    <div className="container mt-4">
+      <h2>Create New Course</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Title</label>
+          <input type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          <textarea className="form-control" rows="3" value={description} onChange={(e) => setDescription(e.target.value)} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Slug</label>
+          <input type="text" className="form-control" value={slug} onChange={(e) => setSlug(e.target.value)} required />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Course Image</label>
+          <input type="file" className="form-control" onChange={(e) => setCover(e.target.files[0])} />
+        </div>
+
+        <button type="submit" className="btn btn-primary">Create Course</button>
+      </form>
     </div>
   );
 }

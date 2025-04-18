@@ -3,6 +3,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import CourseList from "./components/CourseList";
+import { fetchCourses } from "./utils/fetchCourses";
+
+
+
 
 export default function Home() {
   const router = useRouter();
